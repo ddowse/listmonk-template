@@ -13,3 +13,5 @@ bastille bootstrap https://github.com/ddowse/listmonk-template
 ```shell
 bastille template TARGET ddowse/listmonk-template
 ```
+
+Please have a look at the **Bastillefile** for any options and arguments that you could use. 
