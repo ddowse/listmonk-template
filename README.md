@@ -14,4 +14,5 @@ bastille bootstrap https://github.com/ddowse/listmonk-template
 bastille template TARGET ddowse/listmonk-template
 ```
 
-Please have a look at the **Bastillefile** for any options and arguments that you could use. 
+Please have a look at the **Bastillefile** for any options and arguments that you could use.   
+For instance you might want to change listmonks password.  
