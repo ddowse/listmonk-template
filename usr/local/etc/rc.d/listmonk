@@ -1,0 +1,23 @@
+#!/bin/sh
+# PROVIDE: listmonk
+# REQUIRE: NETWORKING SERVERS postgresql
+# KEYWORD: shutdown
+
+. /etc/rc.subr
+
+name="listmonk"
+rcvar=listmonk_enable
+pidfile="/var/run/${name}.pid"
+user="listmonk"
+configfile="/usr/local/etc/listmonk.conf"
+procname="/usr/local/bin/listmonk"
+
+load_rc_config $name
+
+: ${listmonk_enable="NO"}
+: ${listmonk_flags}
+
+command="/usr/sbin/daemon"
+
+command_args="-p ${pidfile} -u ${user} ${procname} --config ${configfile}"
+run_rc_command "$1"

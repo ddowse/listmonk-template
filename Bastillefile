@@ -1,0 +1,42 @@
+ARG LISTMONK=2.1.0
+ARG PASSWORD=listmonk
+ARG PG_VERSION=14
+ARG LISTMONK_PASS=Change_Password
+ARG FQDN=listmonk.localhost
+ARG CA=letsencrypt
+ARG IPVER=4
+
+# Install & setup database
+INCLUDE https://github.com/yaazkal/bastille-postgres
+
+CMD (psql -a -U postgres -c "CREATE ROLE listmonk WITH LOGIN PASSWORD '${PASSWORD}';")
+CMD (psql -a -U postgres -c "CREATE DATABASE listmonk OWNER=listmonk;")
+CMD (echo "host	all	all	${JAIL_IP}/32	trust" >> /var/db/postgres/data${PG_VERSION}/pg_hba.conf)
+
+SERVICE postgresql restart
+
+
+# Download, Unpack and Install listmonk
+CMD (pw useradd -n listmonk -c "This is the user for the listmonk.app")
+CMD (fetch https://github.com/knadh/listmonk/releases/download/v${LISTMONK}/listmonk_${LISTMONK}_freebsd_amd64.tar.gz -o /tmp)
+CMD (tar -xvzf /tmp/listmonk_${LISTMONK}_freebsd_amd64.tar.gz -C /tmp)
+CMD (install /tmp/listmonk /usr/local/bin/)
+CP  usr/local/etc/listmonk.conf /usr/local/etc/listmonk.conf
+CP  usr/local/etc/rc.d/listmonk	/usr/local/etc/rc.d/listmonk
+CMD chmod u+x /usr/local/etc/rc.d/listmonk
+RENDER /usr/local/etc/listmonk.conf
+CMD (listmonk --config /usr/local/etc/listmonk.conf --install --yes)
+SYSRC listmonk_enable="YES"
+
+# Install & setup webserver 
+#PKG acme.sh nginx 
+#SYSRC nginx_enable="NO"
+#CP usr/local/etc/nginx/nginx.conf	/usr/local/etc/nginx/nginx.conf
+#RENDER /usr/local/etc/nginx/nginx.conf
+
+# Get SSL/TLS Certificate
+#CMD (acme.sh --register-account -m ${EMAIL} --server ${CA})
+#CMD (acme.sh --issue --standalone -d ${DOMAIN} --listen-v${IPVER})
+#CMD echo '0       0       *       *       *       root    acme.sh --cron --home "/root/.acme.sh" > /dev/null' >> /etc/crontab
+
+RESTART
