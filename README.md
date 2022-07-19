@@ -11,5 +11,5 @@ bastille bootstrap https://github.com/ddowse/listmonk-template
 ## Usage
 
 ```shell
-bastille template TARGET ddowse/listmon-template
+bastille template TARGET ddowse/listmonk-template
 ```
